@@ -45,7 +45,10 @@ define(
     else if (this.viewport.x > world.width - this.viewport.w) this.viewport.x = world.width - this.viewport.w;
 
     if (this.viewport.y < 0) this.viewport.y = 0;
-    else if (this.viewport.y > world.height - this.viewport.h) this.viewport.y = world.height - this.viewport.h;
+    else if (this.viewport.y > world.height - this.viewport.h) {
+      this.viewport.y = world.height - this.viewport.h;
+      if (this.viewport.y < 0) this.viewport.y = 0;
+    }
   };
 
   Graphics.prototype.zoom = function (delta) {
