@@ -14,15 +14,21 @@ requirejs.config({
 });
 
 define(
-  ['assets', 'world', 'game', 'gui', 'logic/game_context', 'Zepto'],
-  function(assets, world, game, gui, game_context, $) {
+  ['assets', 'world', 'game', 'gui', 'logic/debug_context', 'logic/game_context', 'logic/worldBuilder', 'Zepto'],
+  function(assets, world, game, gui, debug_context, game_context, worldBuilder, $) {
 
     $(function() {
       assets.load(function(){
         world.init();
-        game.init(game_context);
+        // Kind of ugly way to build the world
+        worldBuilder();
+        game.init(debug_context);
         game.loop();
       });
     });
 
+    // Debug exposed vars
+    window.game_context = game_context;
+    window.debug_context = debug_context;
+    window.game = game;
 });

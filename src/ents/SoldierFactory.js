@@ -12,11 +12,12 @@ define(['ents/Factory', 'assets', 'config', 'ents/Rifleman', 'ents/ATman'], func
       this.w = 47;
       this.h = 52;
 
-      this.spawnX = 95;
+      this.spawnX = 105;
 
 
       if (faction === 1) {
         this.x = config.WORLD_WIDTH - this.x - this.w;
+        this.spawnX = config.WORLD_WIDTH - this.spawnX;
       }
 
       this.sprite = {

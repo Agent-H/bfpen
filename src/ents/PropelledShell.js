@@ -79,14 +79,14 @@ define(
     this.x = nextX;
 
     if (!this.rightToLeft && this.x >= this.ex || this.rightToLeft && this.x <= this.ex) {
-
-      for (i = 0; i < world.units.length; i++) {
-        x = world.units[i].x - this.ex;
-        y = world.units[i].y - this.ey;
+      var units = world.getUnits();
+      for (i = 0; i < units.length; i++) {
+        x = units[i].x - this.ex;
+        y = units[i].y - this.ey;
 
         if ((r = Math.sqrt(x * x + y * y)) < PropelledShell.RADIUS) {
           dist = (1 - r / PropelledShell.RADIUS);
-          world.units[i].hit(PropelledShell.DAMAGE * dist * dist, PropelledShell.PENETRATION / (r * r + 1));
+          units[i].hit(PropelledShell.DAMAGE * dist * dist, PropelledShell.PENETRATION / (r * r + 1));
         }
       }
 

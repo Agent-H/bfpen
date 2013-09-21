@@ -15,7 +15,6 @@ define(
     },
     /* jshint quotmark: single */
 
-    units: [],
     projectiles: [],
     effects: [],
 
@@ -43,6 +42,10 @@ define(
       }
 
       return prev.y;
+    },
+
+    getUnitArrayIdAt: function(x) {
+      return Math.floor(x / this.partitionWidth);
     },
 
     // public :
@@ -97,8 +100,31 @@ define(
       }
     },
 
+    addUnit: function(unit) {
+      var partId = this.getUnitArrayIdAt(unit.x);
+      unit._partId = partId;
+      unit._lastIt = 0;
+      this._units[partId].push(unit);
+    },
+
     getGate: function(num, faction) {
       return this.gates[num + 2*faction];
+    },
+
+    getUnits: function() {
+      return Array.prototype.concat.apply([], this._units);
+    },
+
+    getUnitsNear: function(x) {
+      var id = Math.floor(x / this.partitionWidth);
+      return this._units[id];
+    },
+
+    getUnitsInRange: function(x1, x2) {
+      var id1 = Math.max(Math.floor(x1 / this.partitionWidth), 0);
+      var id2 = Math.min(Math.floor(x2 / this.partitionWidth), config.SPACE_PARTITIONS);
+
+      return Array.prototype.concat.apply([], this._units.slice(id1, id2 + 1));
     },
 
     /* Returns the first entity found at coordinates x, y */
@@ -109,6 +135,13 @@ define(
           return this.factories[i].tank;
         } else if (this.factories[i].soldier.contains(x, y)) {
           return this.factories[i].soldier;
+        }
+      }
+
+      var units = this.getUnitsInRange(x - 30, x + 30);
+      for(i = 0 ; i < units.length ; i++) {
+        if (units[i].contains(x, y)) {
+          return units[i];
         }
       }
     },
@@ -124,7 +157,43 @@ define(
     },
 
     update: function() {
-      for (var i = 0 ; i < 2 ; i++) {
+      var i, j, unit;
+      var curPart, nextPartId;
+
+      var curIt = ++this.iteration;
+
+      for (i = 0; i < this._units.length ; i++) {
+        curPart = this._units[i];
+
+        for (j = 0 ; j < curPart.length ; j++) {
+          unit = curPart[j];
+
+          if (unit._lastIt === curIt)
+            continue;
+
+          if (unit.move()) {
+            curPart.splice(j--, 1);
+          } else {
+            nextPartId = this.getUnitArrayIdAt(unit.x);
+
+            if (nextPartId != unit._partId) {
+              curPart.splice(j--, 1); // Removing from current partition
+              this._units[nextPartId].push(unit);
+              unit._partId = nextPartId;
+            }
+
+            unit._lastIt = curIt;
+          }
+        }
+      }
+
+      for (i = 0; i < world.projectiles.length; i++) {
+        if (world.projectiles[i].move()) {
+          world.projectiles.splice(i--, 1);
+        }
+      }
+
+      for (i = 0 ; i < 2 ; i++) {
         this.factories[i].soldier.update();
         this.factories[i].tank.update();
       }
@@ -141,8 +210,19 @@ define(
         ctx.drawImage(img,0,0);
       });
 
+      if (this.width / config.SPACE_PARTITIONS - Math.floor(this.width / config.SPACE_PARTITIONS) !== 0)
+        throw "[ERROR] number of space partitions does not divide world width";
+
+      this.partitionWidth = this.width / config.SPACE_PARTITIONS;
+      this._units = new Array(config.SPACE_PARTITIONS);
+      for (var i = 0 ; i < config.SPACE_PARTITIONS ; i++) {
+        this._units[i] = [];
+      }
+
       this.gates = [];
       this.factories = [];
+
+      this.iteration = 0;
     }
   };
 

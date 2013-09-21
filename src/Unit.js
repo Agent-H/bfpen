@@ -12,6 +12,8 @@ define(
         if (type === this._types[i])
           return true;
       }
+
+
       return false;
     }
   });

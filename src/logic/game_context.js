@@ -1,8 +1,8 @@
 'use strict';
 
 define(
-  ['Graphics', 'config', 'Zepto', 'world', 'logic/worldBuilder', 'logic/game_state', 'EventEmitter'],
-  function (Graphics, config, $, world, worldBuilder, game_state, EventEmitter) {
+  ['Graphics', 'config', 'Zepto', 'world', 'logic/game_state', 'EventEmitter'],
+  function (Graphics, config, $, world, game_state, EventEmitter) {
 
     var CURSOR_SCROLL_MARGIN = 20;
     var VIEWPORT_MOVE_SPEED = 5;
@@ -15,8 +15,11 @@ define(
         this.pos = {x: 0, y: 0};
         this.graphics = new Graphics();
 
-        // Kind of ugly way to build the world
-        worldBuilder();
+        this.highlight = {
+          enable: false,
+          x: 0,
+          y: 0
+        };
       },
 
       onActivate: function () {
@@ -33,10 +36,6 @@ define(
           this.trigger('selectEntity', ent);
           this.selectedEntity = ent;
         }
-      },
-
-      onMousemove: function (e) {
-        this.pos = this.graphics.mapCoords(e.pageX, e.pageY);
       },
 
       onMousewheel: function (e) {
@@ -57,34 +56,33 @@ define(
         } else if (y < CURSOR_SCROLL_MARGIN) {
           this.graphics.moveViewport(0, -VIEWPORT_MOVE_SPEED);
         }
+
+        this.pos = this.graphics.mapCoords(map.mouse.x, map.mouse.y);
+
+        var worldCoords = this.graphics.mapCoords(map.mouse.x, map.mouse.y);
+        var ent = world.getEntityAt(worldCoords.x, worldCoords.y);
+
+        if (ent != null) {
+          this.highlight.enable = true;
+          this.highlight.x = ent.x + ent.w/2;
+          this.highlight.y = ent.y;
+        } else
+          this.highlight.enable = false;
       },
 
       AI: function () {
-        var soldiersCount = world.units.length;
-        for (var i = 0; i < soldiersCount; i++) {
-          world.units[i].think();
+        var units = world.getUnits();
+
+        for (var i = 0; i < units.length ; i++) {
+          units[i].think();
         }
       },
 
       physics: function () {
-        var i;
-        for (i = 0; i < world.units.length; i++) {
-          if (world.units[i].move()) {
-            world.units.splice(i--, 1);
-          }
-        }
-
-        for (i = 0; i < world.projectiles.length; i++) {
-          if (world.projectiles[i].move()) {
-            world.projectiles.splice(i--, 1);
-          }
-        }
+        world.update();
       },
 
       logic: function () {
-        game_state.players[0].update();
-        game_state.players[1].update();
-        world.update();
       },
 
       draw: function (ctx) {
@@ -98,7 +96,24 @@ define(
         }
 
 
-        this.graphics.draw(ctx);
+        var highlight = this.highlight;
+        this.graphics.draw(ctx, function(ctx) {
+          if (highlight.enable) {
+            ctx.beginPath();
+            ctx.moveTo(highlight.x, highlight.y);
+            ctx.lineTo(highlight.x - 20, highlight.y - 15);
+            ctx.lineTo(highlight.x - 10, highlight.y - 15);
+            ctx.lineTo(highlight.x - 10, highlight.y - 40);
+            ctx.lineTo(highlight.x + 10, highlight.y - 40);
+            ctx.lineTo(highlight.x + 10, highlight.y - 15);
+            ctx.lineTo(highlight.x + 20, highlight.y - 15);
+            ctx.lineTo(highlight.x, highlight.y);
+
+            ctx.fillStyle = '#c51';
+            ctx.fill();
+          }
+
+        });
       }
     });
 

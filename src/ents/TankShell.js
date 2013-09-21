@@ -46,14 +46,14 @@ define(
       this.lastTime = Date.now();
 
       if (!this.rightToLeft && this.x >= this.ex || this.rightToLeft && this.x <= this.ex) {
-        var x, y, r, i, dist;
-        for (i = 0; i < world.units.length; i++) {
-          x = world.units[i].x - this.ex;
-          y = world.units[i].y - this.ey;
+        var x, y, r, i, dist, units = world.getUnits();
+        for (i = 0; i < units.length; i++) {
+          x = units[i].x - this.ex;
+          y = units[i].y - this.ey;
 
-          if (world.units[i] !== this.target && (r = Math.sqrt(x * x + y * y)) < TankShell.RADIUS) {
+          if (units[i] !== this.target && (r = Math.sqrt(x * x + y * y)) < TankShell.RADIUS) {
             dist = (1 - r / TankShell.RADIUS);
-            world.units[i].hit(TankShell.DAMAGE * dist * dist, TankShell.PENETRATION / (r * r + 1));
+            units[i].hit(TankShell.DAMAGE * dist * dist, TankShell.PENETRATION / (r * r + 1));
           }
         }
 

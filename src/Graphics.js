@@ -95,12 +95,13 @@ define(
     }
 
     // Drawing units, projectiles and effects
-    var unitsCount = world.units.length,
+    var units = world.getUnits(),
+      unitsCount = units.length,
       sprites = new Array(unitsCount + world.effects.length + world.projectiles.length),
       s, count = 0;
 
     for (i = 0; i < unitsCount; i++) {
-      sprites[count++] = world.units[i].getSprite();
+      sprites[count++] = units[i].getSprite();
       //*
       // Print debug infos about unit
       // var unit = world.units[i];

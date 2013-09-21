@@ -11,7 +11,7 @@ define(
       shield: 100,
       hp: 400,
 
-      craftDifficulty: 500,
+      craftDifficulty: 5,
 
       targetPreference: [
         'tank',
@@ -101,10 +101,10 @@ define(
           // run-over
 
           // !!! inefficient & dirty
-          var soldierX, unit;
-          for (var i = 0; i < world.units.length; i++) {
-            if (world.units[i].faction === this.faction) continue;
-            unit = world.units[i];
+          var soldierX, unit, units = world.getUnits();
+          for (var i = 0; i < units.length; i++) {
+            if (units[i].faction === this.faction) continue;
+            unit = units[i];
             soldierX = unit.x;
             if (Math.abs(soldierX - this.x) < Tank.RUN_OVER_DIST && unit.isType('soldier') && soldierX > 375 && soldierX < world.width - 375 &&
               (this.faction === 0 && soldierX > this.x ||

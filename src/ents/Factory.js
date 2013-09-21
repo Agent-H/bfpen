@@ -56,7 +56,7 @@ define(
           curTime = Date.now();
           this.currentProgress += (curTime - this.lastTime) / 1000 * this.craftSpeed;
           if (this.currentProgress > this.queue[0].craftDifficulty) {
-            world.units.push(this.queue[0]);
+            world.addUnit(this.queue[0]);
             this.queue.splice(0, 1);
             this.currentProgress = 0;
             this.trigger('update');

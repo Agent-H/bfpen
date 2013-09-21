@@ -97,7 +97,6 @@ define(
 
     swapContext: function(context) {
       _.trigger(game.context, 'deactivate');
-      context.willActivate();
       _.trigger(context, 'activate');
       this.context = context;
     }

@@ -1,10 +1,10 @@
 'use strict';
 
 define(
-  ['Unit', 'world', 'mixins/Shooting'],
-  function (Unit, world, Shooting) {
+  ['Unit', 'world', 'mixins/Shooting', 'mixins/Ground2D'],
+  function (Unit, world, Shooting, Ground2D) {
 
-    var GroundUnit = Unit.extend(Shooting, {
+    var GroundUnit = Unit.extend(Shooting, Ground2D, {
       type: 'groundUnit',
 
       targetPreference: [],
@@ -29,10 +29,12 @@ define(
         var soldierX, i, gate, selected, unit;
         var minRange = (this.minRange != null) ? this.minRange : 0;
         var maxRange = (this.maxRange != null) ? this.maxRange : this.range;
+
         // !!! inefficient & dirty
-        for (i = 0; i < world.units.length; i++) {
-          unit = world.units[i];
-          soldierX = world.units[i].x;
+        var units = world.getUnits();
+        for (i = 0; i < units.length; i++) {
+          unit = units[i];
+          soldierX = units[i].x;
 
           if (unit.faction === this.faction) continue;
 

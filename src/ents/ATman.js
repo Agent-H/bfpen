@@ -10,7 +10,7 @@ define(
 
     thumb: 'atman-icon.png',
 
-    craftDifficulty: 50,
+    craftDifficulty: 5,
 
     targetPreference: [
       'tank',

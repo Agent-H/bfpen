@@ -26,7 +26,7 @@ define(
         });
     })($);
 
-    var PROGRESS_REFRESH_TIME = 1000;
+    var PROGRESS_REFRESH_TIME = 300;
 
 
     // Getting elements

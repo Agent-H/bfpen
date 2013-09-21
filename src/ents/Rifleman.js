@@ -14,7 +14,7 @@ define(
       penetration: 2,
       range: 200,
 
-      craftDifficulty: 10,
+      craftDifficulty: 1,
 
       targetPreference: [
         'soldier',

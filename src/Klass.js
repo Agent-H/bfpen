@@ -31,6 +31,8 @@ define(function(){
           fn.prototype._ctrs.push(proto[i]);
         } else if(i !== '_ctrs') {
           fn.prototype[i] = proto[i];
+        } else {
+          fn.prototype._ctrs = fn.prototype._ctrs.concat(proto[i]);
         }
       }
     }
