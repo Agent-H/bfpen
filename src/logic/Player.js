@@ -1,33 +1,40 @@
 'use strict';
 
 define(
-  [],
-  function () {
-  var SOLDIER_FACTORY_X = 105;
-  var TANK_FACTORY_X = 45;
+  ['EventEmitter'],
+  function (EventEmitter) {
 
+  var Player = EventEmitter.extend({
 
-  function Player(faction) {
-    this.money = 100;
-    this.faction = faction;
+    constructor: function(faction) {
+      this._money = 500;
+      this.faction = faction;
 
-    /*this.factories = {
-      'soldier': new Factory(SOLDIER_FACTORY_X, faction),
-      'tank': new Factory(TANK_FACTORY_X, faction)
-    };*/
-  }
+      /*this.factories = {
+        'soldier': new Factory(SOLDIER_FACTORY_X, faction),
+        'tank': new Factory(TANK_FACTORY_X, faction)
+      };*/
+    },
 
-  Player.prototype.getFactory = function (type) {
-    return this.factories[type];
-  };
+    addMoney: function (m) {
+      if (this._money >= -m) {
+        this._money += m;
+        this.trigger('update');
+        return true;
+      }
+      return false;
+    },
 
-  Player.prototype.update = function () {
-    /*this.factories.soldier.update();
-    this.factories.tank.update();*/
-  };
+    setMoney: function (m) {
+      if (m <= 0) return false;
+      this._money = m;
+      this.trigger('update');
+    },
 
-  Player.prototype.createUnit = function (factory, unitType) {
+    getMoney: function() {
+      return this._money;
+    }
+  });
 
-  };
   return Player;
 });

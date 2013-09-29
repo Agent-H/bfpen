@@ -22,7 +22,7 @@ define(
         world.init();
         // Kind of ugly way to build the world
         worldBuilder();
-        game.init(debug_context);
+        game.init(game_context);
         game.loop();
       });
     });

@@ -25,6 +25,22 @@ define(function(){
       }
 
       return ret;
+    },
+
+    bind: function(fn, ctx) {
+      // Version 1 : bind(function(){}, context);
+      if (typeof fn === 'function') {
+        return function() {
+          fn.apply(ctx, arguments);
+        };
+      }
+      // Version 2 : bind(ctx, methods...)
+      var meths = Array.prototype.slice.call(arguments, 1), m;
+
+      for (var i = 0 ; i < meths.length ; i++) {
+        m = fn[meths[i]];
+        fn[meths[i]] = _.bind(m, fn);
+      }
     }
   };
 

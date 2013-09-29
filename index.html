@@ -8,6 +8,11 @@
 	<body>
 		<canvas id="screen"></canvas>
 		<div id="GUI">
+			<div class="panel" id="status">
+				<div>
+					Money: <span id="cash">2500</span>$
+				</div>
+			</div>
 			<!--<a href="#" class="btn" id="open-units-menu-btn">Units</a>
 			<div id="cash">2500$</div>-->
 			<div id="panel-pic" class="panel">
@@ -31,20 +36,20 @@
 
 	<script type="text/template" id="t_factory_status">
 		<div class="factory-status">
-			<div class="queue-item next">
+			<a href="#" data-queueid="0", class="queue-item next">
 				{% if (o.queue.length != 0) { %}
 					<img src="{%= o.queue[0].thumb %}" />
 				{% } %}
-			</div>
+			</a>
 			<div>
 				<div class="progress-bar"></div>
 				<div class="queue">
 				{% for(var i = 1 ; i < o.queueLength ; i++) { %}
-					<div class="queue-item">
+					<a href="#" data-queueid="{%= i %}" class="queue-item">
 					{% if (i < o.queue.length) { %}
 						<img src="{%= o.queue[i].thumb %}" />
 					{% } %}
-					</div>
+					</a>
 				{% } %}
 				</div>
 			</div>

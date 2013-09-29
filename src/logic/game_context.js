@@ -9,17 +9,33 @@ define(
 
     var PLAYER_TEAM = 0;
 
+
+    /*
+        +--+ <- TOP_Y / TOP_X
+        |  |
+        |  |
+      +-+  +-+ <-- MID_Y / MID_X
+       \    /
+        \  /
+         \/ <- BASE_Y
+
+         ++ <- ref
+    */
+    var ARROW_TOP_Y = 20;
+    var ARROW_TOP_X = 4;
+    var ARROW_MID_Y = 8;
+    var ARROW_MID_X = 9;
+    var ARROW_BASE_Y = 0;
+    var ARROW_COLOR = '#903';
+
+
     var GameContext = EventEmitter.extend({
 
       init: function () {
         this.pos = {x: 0, y: 0};
         this.graphics = new Graphics();
 
-        this.highlight = {
-          enable: false,
-          x: 0,
-          y: 0
-        };
+        this.highlight = null;
       },
 
       onActivate: function () {
@@ -63,11 +79,9 @@ define(
         var ent = world.getEntityAt(worldCoords.x, worldCoords.y);
 
         if (ent != null) {
-          this.highlight.enable = true;
-          this.highlight.x = ent.x + ent.w/2;
-          this.highlight.y = ent.y;
+          this.highlight = ent;
         } else
-          this.highlight.enable = false;
+          this.highlight = null;
       },
 
       AI: function () {
@@ -96,24 +110,36 @@ define(
         }
 
 
-        var highlight = this.highlight;
+        var self = this;
         this.graphics.draw(ctx, function(ctx) {
-          if (highlight.enable) {
-            ctx.beginPath();
-            ctx.moveTo(highlight.x, highlight.y);
-            ctx.lineTo(highlight.x - 20, highlight.y - 15);
-            ctx.lineTo(highlight.x - 10, highlight.y - 15);
-            ctx.lineTo(highlight.x - 10, highlight.y - 40);
-            ctx.lineTo(highlight.x + 10, highlight.y - 40);
-            ctx.lineTo(highlight.x + 10, highlight.y - 15);
-            ctx.lineTo(highlight.x + 20, highlight.y - 15);
-            ctx.lineTo(highlight.x, highlight.y);
-
-            ctx.fillStyle = '#c51';
-            ctx.fill();
+          if (self.highlight) {
+            self.drawArrow(ctx, self.highlight);
           }
-
+          if (self.selectedEntity) {
+            self.drawArrow(ctx, self.selectedEntity);
+          }
         });
+
+
+      },
+
+      drawArrow: function (ctx, ent) {
+        ctx.beginPath();
+
+        var x = ent.pos().x + ent.width() / 2;
+        var y = ent.pos().y;
+
+        ctx.moveTo(x, y + ARROW_BASE_Y);
+        ctx.lineTo(x - ARROW_MID_X, y - ARROW_MID_Y);
+        ctx.lineTo(x - ARROW_TOP_X, y - ARROW_MID_Y);
+        ctx.lineTo(x - ARROW_TOP_X, y - ARROW_TOP_Y);
+        ctx.lineTo(x + ARROW_TOP_X, y - ARROW_TOP_Y);
+        ctx.lineTo(x + ARROW_TOP_X, y - ARROW_MID_Y);
+        ctx.lineTo(x + ARROW_MID_X, y - ARROW_MID_Y);
+        ctx.lineTo(x, y + ARROW_BASE_Y);
+
+        ctx.fillStyle = ARROW_COLOR;
+        ctx.fill();
       }
     });
 

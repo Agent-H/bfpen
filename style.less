@@ -24,10 +24,26 @@ html, body {
   width: 100%;
   height: 100%;
 
+
+
   .panel {
     position: absolute;
     background-color: @base;
     border: 1px @highlight solid;
+    color: @highlight;
+  }
+}
+
+#status {
+  top: 0;
+  left: 200px;
+  right: 200px;
+  height: 32px;
+
+  line-height: 20px;
+
+  & > div {
+    margin: 6px;
   }
 }
 

@@ -1,8 +1,8 @@
 'use strict';
 
 define(
-  ['Klass', 'mixins/TwoDim', 'world', 'mixins/Selectable', 'EventEmitter'],
-  function (Klass, TwoDim, world, Selectable, EventEmitter) {
+  ['utils', 'Klass', 'mixins/TwoDim', 'world', 'mixins/Selectable', 'EventEmitter', 'logic/game_state'],
+  function (_, Klass, TwoDim, world, Selectable, EventEmitter, game_state) {
 
     var Factory = EventEmitter.extend(TwoDim, Selectable, {
 
@@ -14,16 +14,33 @@ define(
 
       lastTime: 0,
 
-      constructor: function (x, faction) {
+      selType: 'factory',
+
+      constructor: function (faction) {
         this.faction = faction;
-        this.spawnX = x;
         this.queue = [];
+        this.player = game_state.players[this.faction];
+        console.log(game_state);
       },
 
       getCurrentUnitProgress: function () {
         if (this.queue.length === 0)
           return 0;
         return this.currentProgress / this.queue[0].craftDifficulty * 100;
+      },
+
+      craftLater: function(craftable) {
+        return _.bind(function() {
+          this.craft(craftable);
+        }, this);
+      },
+
+      craft: function (craftable) {
+        if(this.player.addMoney(-craftable.prototype.price)) {
+          this.enqueueUnit(craftable);
+          return true;
+        }
+        return false;
       },
 
       enqueueUnit: function (UnitType) {
@@ -43,11 +60,21 @@ define(
       },
 
       abortUnit: function (queueId) {
+        if (queueId < 0 || queueId > this.queue.length) return;
+
         if (queueId === 0) {
-          this.currentProgress = 0;
+          this.resetProgress();
         }
-        this.queue.splice(queueId, 1);
+        var u = this.queue.splice(queueId, 1);
+
+        this.player.addMoney(u[0].price);
+
         this.trigger('update');
+      },
+
+      resetProgress: function() {
+        this.currentProgress = 0;
+        this.lastTime = Date.now();
       },
 
       update: function () {

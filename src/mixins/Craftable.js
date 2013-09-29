@@ -3,7 +3,8 @@
 define(function(){
   var Craftable = {
     craftDifficulty: 100,
-    thumb: ''
+    thumb: '',
+    price: 100
   };
 
   return Craftable;

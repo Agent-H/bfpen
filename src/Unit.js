@@ -1,11 +1,14 @@
 'use strict';
 
 define(
-  ['Klass', 'mixins/TwoDim', 'mixins/Destroyable'],
-  function(Klass, TwoDim, Destroyable){
-  var Unit = Klass.extend(TwoDim, Destroyable, {
+  ['Klass', 'mixins/TwoDim', 'mixins/Destroyable', 'mixins/Selectable', 'EventEmitter'],
+  function(Klass, TwoDim, Destroyable, Selectable, EventEmitter){
+
+  var Unit = EventEmitter.extend(TwoDim, Destroyable, Selectable, {
 
     _types: ['unit'],
+
+    selType: 'unit',
 
     isType: function(type) {
       for(var i = 0 ; i < this._types.length ; i++) {

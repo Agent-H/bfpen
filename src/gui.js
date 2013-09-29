@@ -1,8 +1,8 @@
 'use strict';
 
 define(
-  ['Zepto', 'logic/game_context', 'tmpl'],
-  function ($, game_context, tmpl){
+  ['Zepto', 'logic/game_context', 'tmpl', 'logic/game_state'],
+  function ($, game_context, tmpl, game_state){
 
   $(function($){
 
@@ -33,6 +33,18 @@ define(
     var $pic = $('#panel-pic');
     var $status = $('#panel-status');
     var $actions = $('#panel-actions');
+    var $cash = $('#cash');
+
+    var player = game_state.getActualPlayer();
+
+
+    function updateCash() {
+      $cash.text(player.getMoney());
+    }
+    player.addListener({
+      onUpdate: updateCash
+    });
+    updateCash();
 
     var displayEntity;
     var progressBar;
@@ -63,7 +75,7 @@ define(
     };
 
     function checkProgress() {
-      if(progressBar != null && displayEntity != null) {
+      if(progressBar != null && displayEntity != null && displayEntity.selType === 'factory') {
         progressBar.progress(displayEntity.getCurrentUnitProgress());
       }
 
@@ -81,15 +93,25 @@ define(
 
     function updateDOM() {
       var actions = tmpl('t_actions', {actions: displayEntity.actions});
-      var status = tmpl('t_factory_status', displayEntity);
-
       $actions.empty().append(actions);
-      $status.empty().append(status);
 
-      progressBar = $status.find('.progress-bar').progress();
+      if (displayEntity.selType === 'factory') {
+        var status = tmpl('t_factory_status', displayEntity);
 
-      if(progressBar != null && displayEntity != null) {
-        progressBar.progress(displayEntity.getCurrentUnitProgress());
+
+        $status.empty().append(status);
+
+        progressBar = $status.find('.progress-bar').progress();
+
+        if(progressBar != null && displayEntity != null) {
+          progressBar.progress(displayEntity.getCurrentUnitProgress());
+        }
+
+        $status.find('.queue-item').click(function() {
+          displayEntity.abortUnit(parseInt($(this).attr('data-queueid')));
+        });
+      } else {
+        $status.empty();
       }
     }
 
@@ -99,81 +121,6 @@ define(
       }
     });
 
-    /*var menu = (function(){
 
-      var REFRESH_RATE = 500;
-
-
-      var el = $('#menu');
-      var active = false;
-
-      var soldierFactory = getFactoy($('#soldier-factory'));
-      var tankFactory = getFactoy($('#tank-factory'));
-
-      function getFactoy(el){
-        var progress = el.find('.progress-bar').progress();
-        return {
-          progress: function(arg){ progress.progress(arg);},
-          queue: el.find('.factory-queue'),
-          currentUnit: el.find('.current-unit')
-        };
-      }
-
-
-      function refresh(){
-        var queue, i, player, factory, div;
-        if(active){
-          // update stuff
-
-          player = GAME_STATE.players[0];
-          factory = player.getFactory('soldier');
-
-          soldierFactory.progress({
-            progress: factory.getCurrentUnitProgress()
-          });
-
-          queue = factory.getQueue();
-          soldierFactory.queue.empty();
-
-          if (factory.queue.length > 0) {
-            soldierFactory.currentUnit.empty().addClass('active')
-              .append($('<img src="rifleman-icon.png" />'));
-          } else {
-            soldierFactory.currentUnit.empty().removeClass('active');
-          }
-
-          for(i = 1 ; i < factory.queueLength ; i++) {
-            div = $('<div class="queued-unit unit-box" />');
-            if (i < factory.queue.length) {
-              div.addClass('active');
-            }
-            soldierFactory.queue.append(div);
-          }
-
-          window.setTimeout(refresh, REFRESH_RATE);
-        }
-      }
-
-      el.find('.close-btn').bind('click', function(){
-        menu.close();
-      });
-
-      return {
-        open: function(){
-          el.show();
-          active = true;
-          refresh();
-        },
-
-        close: function(){
-          el.hide();
-          active = false;
-        }
-      };
-    })();
-
-    $('#open-units-menu-btn').bind('click', function(){
-      menu.open();
-    });*/
   });
 });

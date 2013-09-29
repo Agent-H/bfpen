@@ -3,9 +3,11 @@
 define(function(){
 
   var Selectable = {
+
+    selType: 'default',
+
     constructor: function(){
       this.actions = [];
-      this.thumb = null;
     },
 
     addAction: function(a) {

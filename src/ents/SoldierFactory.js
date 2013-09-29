@@ -1,10 +1,10 @@
 'use strict';
 
-define(['ents/Factory', 'assets', 'config', 'ents/Rifleman', 'ents/ATman'], function(Factory, assets, config, Rifleman, ATman) {
+define(['ents/Factory', 'assets', 'config', 'ents/Rifleman', 'ents/ATman'],
+ function(Factory, assets, config, Rifleman, ATman) {
 
   var SoldierFactory = Factory.extend({
     constructor: function(faction) {
-      var self = this;
       this.faction = faction;
 
       this.x = 90;
@@ -36,16 +36,12 @@ define(['ents/Factory', 'assets', 'config', 'ents/Rifleman', 'ents/ATman'], func
         img: Rifleman.prototype.thumb,
         name: 'rifleman',
         title: 'create rifleman',
-        cb: function() {
-          self.enqueueUnit(Rifleman);
-        }
+        cb: this.craftLater(Rifleman)
       }, {
         img: ATman.prototype.thumb,
         name: 'atman',
         title: 'create anti-tank',
-        cb: function() {
-          self.enqueueUnit(ATman);
-        }
+        cb: this.craftLater(ATman)
       }]);
     },
 

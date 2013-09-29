@@ -11,6 +11,8 @@ define(
       shield: 100,
       hp: 400,
 
+      thumb: 'tank-icon.png',
+
       craftDifficulty: 5,
 
       targetPreference: [

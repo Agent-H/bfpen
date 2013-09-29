@@ -7,8 +7,6 @@ define(['ents/Factory', 'assets', 'config', 'ents/Tank'], function(Factory, asse
 
       this.faction = faction;
 
-      var self = this;
-
       this.x = 31;
       this.y = 283;
       this.w = 47;
@@ -37,9 +35,7 @@ define(['ents/Factory', 'assets', 'config', 'ents/Tank'], function(Factory, asse
         img: Tank.prototype.thumb,
         name: 'tank',
         title: 'create tank',
-        cb: function() {
-          self.enqueueUnit(Tank);
-        }
+        cb: this.craftLater(Tank)
       }]);
 
     },

@@ -8,6 +8,13 @@ define(['Klass', 'mixins/TwoDim'], function(Klass, TwoDim){
       console.log('hello ground');
     },
 
+    pos: function() {
+      return {
+        x: this.x - this.w/2,
+        y: this.y - this.h
+      };
+    },
+
     contains: function(x, y) {
       var xOff = this.w/2;
       var yOff = this.h;
